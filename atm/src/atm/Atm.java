@@ -23,16 +23,19 @@ public class Atm {
 	private String brandName;
 	private UserManager um;
 	private AccountManager am;
+	private FileManager fm;
+	
+	private int log;
 	
 	public Atm(String brandName) {
+		this.log = -1;
 		this.brandName = brandName;
-	}
-	
-	private void init() {
 		this.um = UserManager.getInstance();
 		this.am = AccountManager.getInstance();
+		this.fm = FileManager.getInstance();
 	}
 	
+	//동일한 주소값을 보내면 안댐
 	private void printAlldata() {
 		for(User user: um.getList())
 			System.out.println(user);
@@ -40,32 +43,34 @@ public class Atm {
 	
 	public void run() {
 		// 회원관리 계좌관리 뱅킹서비스 파일처리
-		init();
 		while(true) {
 			printMenu();
-			int select = inputNum(this.sc.next());
+			int select = inputNum("메뉴");
 			if(select == JOIN) um.joinUser();
-			else if(select == LEAVE) um.leaveUser();
-			else if(select == LOGIN) um.loginUser();
-			else if(select == LOGOUT) um.logoutUser();
-			else if(select == CEATE_ACC) am.createAcc();
-			else if(select == DELETE_ACC) am.deleteAcc();
-			else if(select == VIEW_BALANCE) userManager.viewBalance();
-			else if(select == INPUT_MONEY) am.inputMoney();
-			else if(select == OUT_MONEY) am.outMoney();
-			else if(select == MOVE_MONEY) am.moveMoney();
-			else if(select == SAVE_MONEY) am.saveMoney();
-			else if(select == LOAD_MONEY) am.loadMoney();
+			else if(select == LEAVE) this.log = um.leaveUser(this.log);
+			else if(select == LOGIN) this.log = um.loginUser(this.log);
+			else if(select == LOGOUT && this.log != -1) this.log = um.logoutUser();
+//			else if(select == CEATE_ACC) am.createAcc();
+//			else if(select == DELETE_ACC) am.deleteAcc();
+//			else if(select == VIEW_BALANCE) userManager.viewBalance();
+//			else if(select == INPUT_MONEY) am.inputMoney();
+//			else if(select == OUT_MONEY) am.outMoney();
+//			else if(select == MOVE_MONEY) am.moveMoney();
+//			else if(select == SAVE_MONEY) am.saveMoney();
+//			else if(select == LOAD_MONEY) am.loadMoney();
 			else if(select == QUIT) break;
 		}
 	}
 	
 	private void printMenu() {
 		System.out.println("===== "+this.brandName+" ATM"+" =====");
-		System.out.println("[1] 회원관리");
-		System.out.println("[2] 계좌관리");
-		System.out.println("[3] 뱅킹서비스");
-		System.out.println("[4] 파일처리");
+		if(this.log != -1) {
+			System.out.printf("%s님 안녕하세요. 로그인 상태입니다.\n",um.getList().get(this.log).getName());
+		}
+		System.out.println("[1] 회원가입");
+		System.out.println("[2] 회원탈퇴");
+		System.out.println("[3] 로그인");
+		System.out.println("[4] 로그아웃");
 		System.out.println("[5] 계좌개설");
 		System.out.println("[6] 계좌철회");
 		System.out.println("[7] 계좌조회");
@@ -75,12 +80,10 @@ public class Atm {
 		System.out.println("[11] 저 장");
 		System.out.println("[12] 로 드");
 		System.out.println("[13] 종료");
-		System.out.print("이용하실 서비스를 입력해주세요: ");
 	}
 	
 	private int inputNum(String msg) {
-		System.out.println(msg+" : ");
-		
+		System.out.print(msg+" : ");
 		String input = this.sc.next();
 		
 		int result = -1;
@@ -90,29 +93,5 @@ public class Atm {
 			System.err.println("정수만 입력 가능합니다.");
 		}
 		return result;
-	}
-	
-	private String inputId() {
-		System.out.print("아이디를 입력해주세요 :");
-		return this.sc.next();
-	}
-	
-	private String inputUserName() {
-		System.out.println("사용자 이름을 입력해주세요 :");
-		return this.sc.next();
-	}
-	
-	private boolean idDuplCheck(String id) {
-		if(this.am.getList().isEmpty()) {
-			for(int i=0; i<this.am.getList().size(); i++) {
-				if(this.am.getList().get(i).equals(id))
-					return true;
-			}
-		}
-		return false;
-	}
-	
-	private void addUser(String id) {
-		
 	}
 }
