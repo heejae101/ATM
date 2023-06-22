@@ -10,6 +10,8 @@ public class UserManager {
 	//2. 클래스 내부에서 단일 인스턴스를 생성해준다.
 	//3. 외부에서 단일 인스턴스를 참조할 수 있도록 getter를 제공
 //	어카운트 파일 회원관리 숙제 
+	private AccountManager accManager = AccountManager.getInstance();
+	
 	private ArrayList<User> list = new ArrayList<User>();
 	
 	private UserManager() {}
@@ -85,10 +87,10 @@ public class UserManager {
 		System.out.print("password: ");
 		String password = Atm.sc.next();
 		
-		System.out.println();
-		
 		if(!duplId(id)) {
 			User user = new User(userCode, name, id, password);
+			accManager.createAcc(user);
+			
 			this.list.add(user);
 			System.out.println("회원가입이 완료되었습니다.");
 		}else {
@@ -100,6 +102,7 @@ public class UserManager {
 		if(log != -1) {
 			if(checkPassWord(log)) {
 				this.list.remove(log);
+				accManager.getList().remove(log);
 				log = -1;
 			}
 		}else {
@@ -115,7 +118,6 @@ public class UserManager {
 			
 			if(duplId(id)) {
 				log = idIndex(id);
-				System.out.println(log);
 				if(!checkPassWord(log)) log = -1;
 			}
 			else {
@@ -129,9 +131,19 @@ public class UserManager {
 	}
 	
 	public int logoutUser() {
-		int result = 0;
-		
-		return result;
+		return -1;
+	}
+	
+	public User getUserByUserCode(int log) {
+		for(int i=0; i<this.list.size(); i++) {
+			if(i == log)
+				return this.list.get(i);
+		}
+//		for(User user : this.list) {
+//			if(user.getUserCode() == log)
+//				return user;
+//		}
+		return null;
 	}
 	
 	

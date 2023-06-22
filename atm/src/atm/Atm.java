@@ -50,9 +50,9 @@ public class Atm {
 			else if(select == LEAVE) this.log = um.leaveUser(this.log);
 			else if(select == LOGIN) this.log = um.loginUser(this.log);
 			else if(select == LOGOUT && this.log != -1) this.log = um.logoutUser();
-//			else if(select == CEATE_ACC) am.createAcc();
-//			else if(select == DELETE_ACC) am.deleteAcc();
-//			else if(select == VIEW_BALANCE) userManager.viewBalance();
+			else if(select == CEATE_ACC && this.log != -1) am.createAcc(um.getUserByUserCode(this.log));
+			else if(select == DELETE_ACC && this.log != -1) am.deleteAcc(um.getUserByUserCode(this.log));
+			else if(select == VIEW_BALANCE) am.viewBalance(um.getUserByUserCode(this.log));
 //			else if(select == INPUT_MONEY) am.inputMoney();
 //			else if(select == OUT_MONEY) am.outMoney();
 //			else if(select == MOVE_MONEY) am.moveMoney();
@@ -64,9 +64,6 @@ public class Atm {
 	
 	private void printMenu() {
 		System.out.println("===== "+this.brandName+" ATM"+" =====");
-		if(this.log != -1) {
-			System.out.printf("%s님 안녕하세요. 로그인 상태입니다.\n",um.getList().get(this.log).getName());
-		}
 		System.out.println("[1] 회원가입");
 		System.out.println("[2] 회원탈퇴");
 		System.out.println("[3] 로그인");
@@ -80,11 +77,14 @@ public class Atm {
 		System.out.println("[11] 저 장");
 		System.out.println("[12] 로 드");
 		System.out.println("[13] 종료");
+		if(this.log != -1) {
+			System.out.printf("%s님 안녕하세요. 로그인 상태입니다.\n",um.getList().get(this.log).getName());
+		}
 	}
 	
-	private int inputNum(String msg) {
+	public static int inputNum(String msg) {
 		System.out.print(msg+" : ");
-		String input = this.sc.next();
+		String input = sc.next();
 		
 		int result = -1;
 		try {

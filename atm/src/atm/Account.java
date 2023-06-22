@@ -19,6 +19,18 @@ public class Account {
 		this.accPassword = accPassword;
 		this.money = money;
 	}
+	
+	public int getAccNumber() {
+		return accNumber;
+	}
+	
+	public void setAccNumber(int accNumber) {
+		this.accNumber = accNumber;
+	}
+	
+	public int getAccPassword() {
+		return accPassword;
+	}
 
 	public int getUserCode() {
 		return this.userCode;
