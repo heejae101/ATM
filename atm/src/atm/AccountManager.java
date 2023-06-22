@@ -78,7 +78,7 @@ public class AccountManager {
 	
 	
 	public void deleteAcc(User user) {
-		int inputCode = Atm.inputNum("계좌번호 :");
+		int inputCode = Atm.inputNum("계좌번호");
 		if(inputCode != -1) {
 			if(checkAccNumger(user.getUserCode(),inputCode)) {
 				for(int i=0; i<this.list.size(); i++) {
@@ -99,6 +99,21 @@ public class AccountManager {
 		for(Account account : this.list) {
 			if(account.getUserCode() == user.getUserCode()) {
 				System.out.println(account);
+			}
+		}
+	}
+	
+	public void inputMoney(User user) {
+		int money = 0;
+		
+		do {
+			money = Atm.inputNum("입금할 금액");
+		}while(money == -1);
+	
+		for(Account account : this.list) {
+			if(account.getUserCode() == user.getUserCode()) {
+				account.setMoney(money);
+				break;
 			}
 		}
 	}

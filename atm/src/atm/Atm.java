@@ -15,8 +15,8 @@ public class Atm {
 	private final int INPUT_MONEY = 8;
 	private final int OUT_MONEY = 9;
 	private final int MOVE_MONEY = 10;
-	private final int SAVE_MONEY = 11;
-	private final int LOAD_MONEY = 12;
+	private final int SAVE_FILE = 11;
+	private final int LOAD_FILE = 12;
 	private final int QUIT = 13;
 	
 	public static final Scanner sc = new Scanner(System.in);
@@ -53,7 +53,7 @@ public class Atm {
 			else if(select == CEATE_ACC && this.log != -1) am.createAcc(um.getUserByUserCode(this.log));
 			else if(select == DELETE_ACC && this.log != -1) am.deleteAcc(um.getUserByUserCode(this.log));
 			else if(select == VIEW_BALANCE) am.viewBalance(um.getUserByUserCode(this.log));
-//			else if(select == INPUT_MONEY) am.inputMoney();
+			else if(select == INPUT_MONEY) am.inputMoney(um.getUserByUserCode(this.log));
 //			else if(select == OUT_MONEY) am.outMoney();
 //			else if(select == MOVE_MONEY) am.moveMoney();
 //			else if(select == SAVE_MONEY) am.saveMoney();
