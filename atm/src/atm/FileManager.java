@@ -29,7 +29,7 @@ public class FileManager {
 	}
 	
 	public void saveFile(ArrayList<User> user,  ArrayList<Account> account){
-		// 유저 정보 userCode/name/age/id/password/
+		// 유저 정보 userCode/name/id/password/age
 		// 계정 정보 userCode/accNumber/accPassword/money
 		String str1 = "";
 		String str2 = "";
@@ -42,9 +42,9 @@ public class FileManager {
 				for(int i=0; i<user.size(); i++) {
 					str1 += user.get(i).getUserCode()+"/";
 					str1 += user.get(i).getName()+"/";
-					str1 += user.get(i).getAge()+"/";
 					str1 += user.get(i).getId()+"/";
-					str1 += user.get(i).getPassword();
+					str1 += user.get(i).getPassword()+"/";
+					str1 += user.get(i).getAge();
 					if(i == user.size()-1) {
 						str1 += "\n";
 					}
@@ -64,34 +64,58 @@ public class FileManager {
 				fw2.write(str2);
 				fw1.close();
 				fw2.close();
+				System.out.println("파일 저장 성공!");
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("파일 저장 실패!");
 			}
 		}
 	}
 	
-	public void loadFile() {
+	public void loadFile(ArrayList<User> user,  ArrayList<Account> account) {
 		this.file1 = new File(userFile);
 		this.file2 = new File(accountFile);
 		if(file1.exists() && file2.exists()) {
 			try {
+				
+				// 유저 정보 userCode/name/id/password/age
+				// 계정 정보 userCode/accNumber/accPassword/money
 				this.fr1 = new FileReader(userFile);
 				this.br1 = new BufferedReader(fr1);
 				
 				this.fr2 = new FileReader(accountFile);
 				this.br2 = new BufferedReader(fr2);
 				
+				account.clear();
+				user.clear();
 				
+				while(br2.ready()) {
+					String[] str = br2.readLine().split("/");
+					Account account1 = new Account(Integer.parseInt(str[0]), Integer.parseInt(str[1]), Integer.parseInt(str[2]),Integer.parseInt(str[3]));
+					account.add(account1);
+				}
 				
+				while(br1.ready()) {
+					String[] str = br1.readLine().split("/");
+					User user1 = new User(Integer.parseInt(str[0]),str[1],str[2],str[3],Integer.parseInt(str[4]));
+					user.add(user1);
+				}
 				
+				for(int i=0; i<user.size(); i++) {
+					for(int j=0; j<account.size(); j++) {
+						if(user.get(i).getUserCode() == account.get(j).getUserCode()) {
+							user.get(i).addAccs(account.get(j));
+						}
+					}
+				}
 				
 				fr1.close();
 				br1.close();
 				
 				fr2.close();
 				br2.close();
+				System.out.println("파일 읽기 성공!");
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("파일 읽기 실패!");
 			}
 		}else {
 			System.out.println("파일이 없습니다.");

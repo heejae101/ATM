@@ -81,6 +81,10 @@ public class User {
 		this.accs = accs;
 	}
 	
+	public void addAccs(Account accs) {
+		this.accs.add(accs);
+	}
+	
 	public String getId() {
 		return id;
 	}

@@ -59,8 +59,8 @@ public class Atm {
 	public void run() {
 		while(true) {
 			printMenu();
-			printAlldata();
-			System.out.println(this.log);
+//			printAlldata();
+//			System.out.println(this.log);
 			int select = inputNum("¸Þ´º");
 			if(select == JOIN && this.log == -1)
 				userManager.joinUser();
@@ -85,7 +85,7 @@ public class Atm {
 			else if(select == SAVE_FILE) 
 				fileManager.saveFile(userManager.getList(), accountManager.getList());
 			else if(select == LOAD_FILE) 
-				fileManager.loadFile();
+				fileManager.loadFile(userManager.getList(), accountManager.getList());
 			else if(select == QUIT) break;
 		}
 	}
