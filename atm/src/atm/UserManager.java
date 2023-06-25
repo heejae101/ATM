@@ -29,7 +29,6 @@ public class UserManager {
 	 *  duplId ¸Þ¼­µå
 	 *  @return
 	 *  
-	 * 
 	 */
 	private boolean duplId(String id){
 		boolean dupl = false;

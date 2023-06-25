@@ -73,17 +73,17 @@ public class Atm {
 			else if(select == CEATE_ACC && this.log != -1) 
 				accountManager.createAcc(userManager.getUserByUserCode(this.log));
 			else if(select == DELETE_ACC && this.log != -1) 
-				accountManager.deleteAcc(userManager.getUserByUserCode(this.log));
-			else if(select == VIEW_BALANCE) 
-				accountManager.viewBalance(userManager.getUserByUserCode(this.log));
-			else if(select == INPUT_MONEY) 
-				accountManager.inputMoney(userManager.getUserByUserCode(this.log));
-			else if(select == OUT_MONEY) 
+				accountManager.deleteAcc(this.log,userManager.getUserByUserCode(this.log));
+			else if(select == VIEW_BALANCE && this.log != -1) 
+				accountManager.viewBalance(this.log);
+			else if(select == INPUT_MONEY && this.log != -1) 
+				accountManager.inputMoney(this.log);
+			else if(select == OUT_MONEY && this.log != -1) 
 				accountManager.outMoney(this.log);
-			else if(select == MOVE_MONEY) 
+			else if(select == MOVE_MONEY && this.log != -1) 
 				accountManager.moveMoney(this.log);
 			else if(select == SAVE_FILE) 
-				fileManager.saveFile();
+				fileManager.saveFile(userManager.getList(), accountManager.getList());
 			else if(select == LOAD_FILE) 
 				fileManager.loadFile();
 			else if(select == QUIT) break;
@@ -133,13 +133,14 @@ public class Atm {
 	 * @return 사용자에게 입력 받은 값이 정수일때 입력받은 값을 반환하고 아니면 -1을 반환한다.
 	 */
 	public static int inputNum(String msg) {
-		System.out.print(msg+" : ");
-		String input = sc.next();
 		
 		int result = -1;
-		while(result == -1) {
+		while(true) {
+			System.out.print(msg+" : ");
+			String input = sc.next();
 			try {
 				result = Integer.parseInt(input);
+				break;
 			} catch (Exception e) {
 				System.err.println("정수만 입력 가능합니다.");
 			}

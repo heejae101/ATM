@@ -7,9 +7,7 @@ public class AccountManager {
 	public static AccountManager instance = new AccountManager();
 	private ArrayList<Account> list = new ArrayList<Account>();
 	
-	private AccountManager() {
-		
-	}
+	private AccountManager() {}
 	
 	public static AccountManager getInstance() {
 		return instance;
@@ -32,7 +30,7 @@ public class AccountManager {
 	}
 	
 	
-//	XXXXXX-XX-XXXXXX 6자리-2자리-6자리
+// TODO: XXXXXX-XX-XXXXXX 6자리-2자리-6자리
 	private int gerateRandomCode() {
 		int code = 0;
 		while(true) {
@@ -46,7 +44,15 @@ public class AccountManager {
 		return code;
 	}
 	
-	private boolean checkAccNumger(int UserCode, int accNumber) {
+	private boolean duplAccNumber(int accNumber) {
+		for(Account account : this.list) {
+			if(account.getAccNumber() == accNumber)
+				return true;
+		}
+		return false;
+	}
+	
+	private boolean duplAccNumber(int UserCode, int accNumber) {
 		for(Account account : this.list) {
 			if(account.getUserCode() == UserCode) {
 				if(account.getAccNumber() == accNumber)
@@ -55,6 +61,25 @@ public class AccountManager {
 			
 		}
 		return false;
+	}
+	
+	
+	private boolean checkAccPassword(int accNumber,int accPassword) {
+		for(Account account : this.list) {
+			if(account.getAccNumber() == accNumber && account.getAccPassword() == accPassword) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private Account setUserByUserCode(int log, int accNumber) {
+		for(Account account : this.list) {
+			if(account.getUserCode() == log && account.getAccNumber() == accNumber) {
+				return account;
+			}
+		}
+		return null;
 	}
 	
 	private int getUserMoneyByAccNumber(int log, int accNumber) {
@@ -66,26 +91,27 @@ public class AccountManager {
 		return -1;
 	}
 	
-	private boolean duplUserAccCode(int accNumber) {
+	private void setUserMoneyByUserCode(String Operator, int log, int accNumber, int accPassword, int outMoney) {
+		for(Account account : this.list) {
+			if(account.getAccNumber() == accNumber && account.getAccPassword() == accPassword) {
+				if(Operator.equals("+")) {
+					account.setMoney(account.getMoney()+outMoney);
+					System.out.printf("현재 잔액:%d\n",account.getMoney());
+				}else if(Operator.equals("-")) {
+					account.setMoney(account.getMoney()-outMoney);
+					System.out.printf("현재 잔액:%d\n",account.getMoney());
+				}
+			}
+		}
+	}
+	
+	private void setOtherUserMoneyByAccCode(int accNumber, int inputMoney) {
 		for(Account account : this.list) {
 			if(account.getAccNumber() == accNumber) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private void setUserMoneyByUserCode(int log, int AccNumber, int accPassword, int outMoney) {
-		for(Account account : this.list) {
-			if(account.getAccNumber() == AccNumber && account.getAccPassword() == accPassword) {
-				account.setMoney(account.getMoney()-outMoney);
+				account.setMoney(account.getMoney()+inputMoney);
 			}
 		}
 	}
-	
-//	private boolean checkAccPassword() {
-//		
-//	}
 	
 	public void createAcc(User user) {
 		int accPassword = 0;
@@ -107,73 +133,63 @@ public class AccountManager {
 		System.out.println("계좌 계설이 완료되었습니다.");
 	}
 	
-	
-	public void deleteAcc(User user) {
-		int inputCode = Atm.inputNum("계좌번호");
-		if(inputCode != -1) {
-			int inputPassword = Atm.inputNum("계좌 비밀번호");
-			if(checkAccNumger(user.getUserCode(),inputCode)) {
-				for(int i=0; i<this.list.size(); i++) {
-					int userCode = this.list.get(i).getAccNumber();
-					int userAccPassword = this.list.get(i).getAccPassword();
-					if(userCode == inputCode && userAccPassword == inputPassword) {
-						this.list.remove(i);
-						System.out.println("계좌가 삭제되었습니다.");
-						break;
-					}
-				}
+	public void deleteAcc(int log, User user) {
+		int accNumber = Atm.inputNum("계좌번호");
+		if (duplAccNumber(log, accNumber)){
+			int accPassword = Atm.inputNum("계좌 비밀번호");
+			if (checkAccPassword(accNumber,accPassword)) {
+				ArrayList<Account> accs = user.getAccs();
+				Account acccount = setUserByUserCode(log,accNumber);
+				accs.remove(acccount);
+				this.list.remove(acccount);
+				user.setAccs(accs);
+				System.out.println("계좌가 삭제되었습니다.");
 			}
-			else {
-				System.err.println("입력하신 비밀번호가 회원님 정보와 일치하지 않습니다.");
-			}
-		}else {
-			System.err.println("입력하신 계좌번호는 없는 계좌번호입니다.");
 		}
 	}
 	
-	public void viewBalance(User user){
+	public void viewBalance(int log){
 		System.out.println("회원님의 계좌 정보");
 		for(Account account : this.list) {
-			if(account.getUserCode() == user.getUserCode()) {
+			if(account.getUserCode() == log) {
 				System.out.println(account);
 			}
 		}
 	}
 	
-	public void inputMoney(User user) {
-		int money = -1;
-		int inputCode = -1;
-		do {
-			money = Atm.inputNum("입금할 금액");
-			inputCode = Atm.inputNum("계좌번호");
-		}while(money == -1 || inputCode == -1);
-	
-		for(Account account : this.list) {
-			if(account.getUserCode() == user.getUserCode()){
-				if(account.getAccNumber()==inputCode) {
-					account.setMoney(money);
-					break;	
-				}
+	public void inputMoney(int log) {
+		int accNumber = Atm.inputNum("계좌번호");
+		if (duplAccNumber(log, accNumber)){
+			int accPassword = Atm.inputNum("계좌 비밀번호");
+			if(checkAccPassword(accNumber,accPassword)) {
+				int inputMoney = Atm.inputNum("입금할 금액");
+				setUserMoneyByUserCode("+",log,accNumber,accPassword,inputMoney);
 			}
 		}
 	}
 	
 	public void outMoney(int log) {
-		int inputAccCode = Atm.inputNum("계좌번호");
-		for(Account account : this.list) {
-			if(account.getUserCode() == log && account.getAccNumber() == inputAccCode) {
-				System.out.printf("현재 계좌의 잔액:%d",account.getMoney());
-				int inputMoney = Atm.inputNum("인출하실 금액");
+		int accNumber = Atm.inputNum("계좌번호");
+		
+		if (duplAccNumber(log, accNumber)){
+			int accPassword = Atm.inputNum("계좌 비밀번호");
+			if (checkAccPassword(accNumber,accPassword)) {
+				int money = getUserMoneyByAccNumber(log, accNumber);
+				int outMoney = Atm.inputNum("인출하실 금액");
 				
-				if(inputMoney<account.getMoney()) {
-					account.setMoney(account.getMoney()-inputMoney);
-					break;
+				if(outMoney <= money) {
+					setUserMoneyByUserCode("-",log,accNumber,accPassword,outMoney);				
 				}else {
-					System.out.println("인출하실 금액이 부족합니다.");
-					break;
+					System.err.println("잔액이 부족합니다.");
 				}
+				
+			}else {
+				System.err.println("회원정보가 일치하지 않습니다.");
 			}
+		}else {
+			System.err.println("일치하는 계좌번호가 없습니다.");
 		}
+		
 	}
 	
 	public void moveMoney(int log){
@@ -181,20 +197,23 @@ public class AccountManager {
 		int money = getUserMoneyByAccNumber(log, inputAccNumber);
 		if(money != -1) {
 			int otherUserAccCode = Atm.inputNum("보내실 고객님의 계좌번호");
-			if(duplUserAccCode(otherUserAccCode)) {
+			if(duplAccNumber(otherUserAccCode)) {
 				int outMoney = Atm.inputNum("보내실 금액");
-				if(outMoney < money) {
+				
+				if(outMoney <= money) {
 					int accPassword = Atm.inputNum("계좌 비밀번호");
-					setUserMoneyByUserCode(log,inputAccNumber,accPassword,outMoney);
-					System.out.printf("%d 출금되었습니다.",outMoney);
+					setUserMoneyByUserCode("-",log,inputAccNumber,accPassword,outMoney);
+					setOtherUserMoneyByAccCode(otherUserAccCode,outMoney);
+					System.out.printf("%d원이 출금되었습니다.\n",outMoney);
 				}else {
-					System.out.println("잔액이 부족합니다.");
+					System.err.println("잔액이 부족합니다.");
 				}
+				
 			}else {
-				System.out.println("비밀번호가 틀렸습니다.");
+				System.err.println("비밀번호가 틀렸습니다.");
 			}
 		}else {
-			System.out.println("일치하는 계좌가 없습니다.");
+			System.err.println("일치하는 계좌가 없습니다.");
 		}
 	}
 	
