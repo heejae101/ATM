@@ -11,9 +11,7 @@ public class FileManager {
 	private FileReader fr;
 	private BufferedReader br;
 	
-	private FileManager(){
-		
-	}
+	private FileManager(){}
 	
 	public static FileManager instance = new FileManager();
 	
@@ -21,4 +19,11 @@ public class FileManager {
 		return instance;
 	}
 	
+	public void saveFile() {
+		
+	}
+	
+	public void loadFile() {
+		
+	}
 }
